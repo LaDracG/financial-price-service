@@ -8,10 +8,11 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 import org.finance_price_service.domain.OneDayPrice.OneDayPriceId;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name = "${mysql.tablename")
+@Table(name = "stock_prices")
 @IdClass(OneDayPriceId.class)
 public class OneDayPrice{
 
