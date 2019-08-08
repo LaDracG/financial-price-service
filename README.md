@@ -6,8 +6,11 @@ This project is to setup a server to be able to respond to requests for the last
 
 ### Dependencies
 Spring boot
+
 Maven
+
 MySQL
+
 Java Persistence API
 
 ### Goals
