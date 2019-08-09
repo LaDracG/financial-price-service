@@ -13,6 +13,8 @@ MySQL
 
 Java Persistence API
 
+Jackson
+
 ### Goals
 Maintain data on MySQL, when a user request comes, the server requests data from MySQL first, if not available, it gets data from Alpha Vantage, updates MySQL and responses the new results.
 

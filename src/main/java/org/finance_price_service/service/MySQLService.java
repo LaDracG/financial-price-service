@@ -7,15 +7,28 @@ import org.finance_price_service.domain.rspy.PricesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Deals with MySQL SELECT / INSERT tasks
+ */
 @Service
 public class MySQLService {
   @Autowired private PricesRepository pricesRepository;
 
+  /**
+   * SELECT
+   * @param symbol Stock symbol
+   * @param date   Specific date for price data
+   * @return       OneDayPrice Object
+   */
   public OneDayPrice select(String symbol, String date) {
     Vector<OneDayPrice> price = pricesRepository.findBySymbolAndDate(symbol, date);
     return price.isEmpty() ? null : price.firstElement();
   }
 
+  /**
+   * INSERT
+   * @param prices PricesSet Object, price data to be inserted
+   */
   public void insert(PricesSet prices) {
     for (OneDayPrice price : prices.getPrices()) {
       pricesRepository.save(price);

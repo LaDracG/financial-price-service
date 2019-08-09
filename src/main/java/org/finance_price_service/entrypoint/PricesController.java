@@ -6,6 +6,9 @@ package org.finance_price_service.entrypoint;
   import org.springframework.web.bind.annotation.RequestParam;
   import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Calls QueryLogicService for dealing with requests
+ */
 @RestController
 public class PricesController {
   @Autowired
