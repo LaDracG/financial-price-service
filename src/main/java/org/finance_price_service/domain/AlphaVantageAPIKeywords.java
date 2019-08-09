@@ -1,6 +1,6 @@
 package org.finance_price_service.domain;
 
-public enum AlphaVantageJSONKeys {
+public enum AlphaVantageAPIKeywords {
   Meta_Data("Meta Data"),
   Time_Series("Time Series (Daily)"),
   Information("1. Information"),
@@ -13,9 +13,11 @@ public enum AlphaVantageJSONKeys {
   LOW("3. low"),
   CLOSE("4. close"),
   VOLUME("5. volume"),
-  ERROR("Error Message");
+  ERROR("Error Message"),
+  COMPACT("compact"),
+  FULL("full");
 
   public String key;
 
-  private AlphaVantageJSONKeys(String key) { this.key = key; }
+  private AlphaVantageAPIKeywords(String key) { this.key = key; }
 }

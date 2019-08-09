@@ -2,6 +2,7 @@ package org.finance_price_service.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -10,7 +11,7 @@ import org.finance_price_service.domain.OneDayPrice;
 import org.finance_price_service.domain.PricesSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import static org.finance_price_service.domain.AlphaVantageJSONKeys.*;
+import static org.finance_price_service.domain.AlphaVantageAPIKeywords.*;
 
 /**
  * Deals with the processing logic for upcoming queries.
@@ -20,23 +21,41 @@ public class QueryLogicService {
   @Autowired private MySQLService sql;
   @Autowired private AlphaVantageService alpha;
 
+  private boolean marketClosed(String date) throws ParseException {
+    Calendar c = Calendar.getInstance();
+    c.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(date));
+    if ((c.get(Calendar.DAY_OF_WEEK)) == Calendar.SATURDAY || c.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || sql.isCloseDay(date))
+      return true;
+    else
+      return false;
+  }
+
   /**
    * Querying requests   http://{server_address}/query?symbol=ABCD&days=10
    * @param symbol Stock symbol
    * @param days   Days number that the user requests (starting from today)
    * @return
    */
-  public PricesSet query (String symbol, int days) {
+  public PricesSet query (String symbol, int days) throws Exception {
     PricesSet res = new PricesSet(symbol);
-    for (int i = 0; i < days; ++i) {
+    int countingDays = days;
+    for (int i = 0; i < countingDays; ++i) {
       Calendar cal = Calendar.getInstance();
       cal.add(Calendar.DATE, -i);
       String date = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
       OneDayPrice selected = sql.select(symbol, date);
       if (selected == null) {
-        /** TODO*/
+        if (!marketClosed(date)) {
+          String mode = days <= 100 ? COMPACT.key : FULL.key;
+          update(symbol, mode);
+          --i;
+        }
+        else {
+          ++countingDays;
+        }
       }
-      res.addPrice(sql.select(symbol, date));
+      else
+        res.addPrice(selected);
       }
     return res;
   }
@@ -47,8 +66,8 @@ public class QueryLogicService {
    * @return       Single message
    * @throws Exception
    */
-  public String update(String symbol) throws Exception {
-    String alphaJsonString = alpha.fetch(symbol);
+  public String update(String symbol, String mode) throws Exception {
+    String alphaJsonString = alpha.fetch(symbol, mode);
     ObjectMapper mapper = new ObjectMapper();
     JsonNode alphaJsonNode = mapper.readTree(alphaJsonString);
 

@@ -24,8 +24,8 @@ public class AlphaVantageService {
    * @return       JSON String, Alpha Vantage API response
    * @throws Exception
    */
-  public String fetch(String symbol) throws Exception {
-    String AlphaURL = String.format(url, symbol, this.apiKey);
+  public String fetch(String symbol, String mode) throws Exception {
+    String AlphaURL = String.format(url, symbol, mode, this.apiKey);
     return IOUtils.toString(new URL(AlphaURL), Charset.forName("UTF-8"));
   }
 }

@@ -14,13 +14,14 @@ public class PricesController {
   @Autowired
   private QueryLogicService logic;
   @RequestMapping("/query")
-  public PricesSet response(@RequestParam(value = "symbol") String symbol, @RequestParam(value = "days", defaultValue = "0") int days) {
+  public PricesSet response(@RequestParam(value = "symbol") String symbol, @RequestParam(value = "days", defaultValue = "0") int days)
+      throws Exception {
     return logic.query(symbol, days);
   }
 
   @RequestMapping("/update")
-  public String update(@RequestParam(value = "symbol") String symbol, @RequestParam(value = "date", defaultValue = "") String date) throws Exception {
-    return logic.update(symbol);
+  public String update(@RequestParam(value = "symbol") String symbol, @RequestParam(value = "mode", defaultValue = "compact") String mode) throws Exception {
+    return logic.update(symbol, mode);
   }
 
 }
