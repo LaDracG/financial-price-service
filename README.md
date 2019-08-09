@@ -81,5 +81,5 @@ TABLE stock_price
 
 ### _Notes & Drafts_
 1) Possible exceptions:
-- Stock ticker does not exist (and other errors from API)
+- Stock ticker does not exist (and other errors from API) (Current solution: response null)
 - Missing data (not holiday) both locally and on Alpha Vantage (Current solution: neglected)
