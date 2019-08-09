@@ -43,10 +43,18 @@ Maintain data on MySQL, when a user request comes, the server requests data from
 - AlphaVantageJSONKeys
 
     An Enum including all possible keys for JSON object fetched from Alpha Vantage.
+- ClosedDate
+    
+    Market closed date in String type. Format "yyyy-MM-dd".
 #### Repositories
 - PricesRepository
 
     A JPA repository for prices data.
+    
+- ClosedDatesRepository
+
+    A JPA repository for stock market closed dates.
+    
 #### Resources
 - AlphaVantageConfig
 
@@ -73,9 +81,5 @@ TABLE stock_price
 
 ### _Notes & Drafts_
 1) Possible exceptions:
-- Stock ticker does not exist (and other errors from API)
-- Missing data (not holiday) both locally and on Alpha Vantage
-2) Holiday checking
-3) Missing data, days < 100. Update 100 data points at once.
-4) Missing data, days > 100. Update until oldest date or update all 20 years data points?
-5)Two options on Alpha Vantage: compact(100 data points) and full(past 20 years). Retrieve full data when first time querying for a symbol?
+- Stock ticker does not exist (and other errors from API) (Current solution: response null)
+- Missing data (not holiday) both locally and on Alpha Vantage (Current solution: neglected)

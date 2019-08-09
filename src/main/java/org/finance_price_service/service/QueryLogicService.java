@@ -39,20 +39,21 @@ public class QueryLogicService {
   public PricesSet query (String symbol, int days) throws Exception {
     PricesSet res = new PricesSet(symbol);
     int countingDays = days;
+    boolean updated = false;
     for (int i = 0; i < countingDays; ++i) {
       Calendar cal = Calendar.getInstance();
       cal.add(Calendar.DATE, -i);
       String date = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
       OneDayPrice selected = sql.select(symbol, date);
       if (selected == null) {
-        if (!marketClosed(date)) {
+        if (!marketClosed(date) && !updated) {
           String mode = days <= 100 ? COMPACT.key : FULL.key;
-          update(symbol, mode);
+          if (update(symbol, mode) == null) return null;
+          updated = true;
           --i;
         }
-        else {
+        else
           ++countingDays;
-        }
       }
       else
         res.addPrice(selected);
@@ -70,6 +71,7 @@ public class QueryLogicService {
     String alphaJsonString = alpha.fetch(symbol, mode);
     ObjectMapper mapper = new ObjectMapper();
     JsonNode alphaJsonNode = mapper.readTree(alphaJsonString);
+    if (alphaJsonNode.has(ERROR.key)) return null;
 
     /**
      * Converts JsonNode to PricesSet
