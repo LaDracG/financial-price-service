@@ -48,13 +48,12 @@ public class QueryLogicService {
       if (selected == null) {
         if (!marketClosed(date) && !updated) {
           String mode = days <= 100 ? COMPACT.key : FULL.key;
-          update(symbol, mode);
+          if (update(symbol, mode) == null) return null;
           updated = true;
           --i;
         }
-        else {
+        else
           ++countingDays;
-        }
       }
       else
         res.addPrice(selected);
@@ -72,6 +71,7 @@ public class QueryLogicService {
     String alphaJsonString = alpha.fetch(symbol, mode);
     ObjectMapper mapper = new ObjectMapper();
     JsonNode alphaJsonNode = mapper.readTree(alphaJsonString);
+    if (alphaJsonNode.has(ERROR.key)) return null;
 
     /**
      * Converts JsonNode to PricesSet
