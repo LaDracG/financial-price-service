@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import org.finance_price_service.domain.OneDayPrice;
 import org.finance_price_service.domain.PricesSet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import static org.finance_price_service.domain.AlphaVantageAPIKeywords.*;
 
@@ -18,12 +19,17 @@ import static org.finance_price_service.domain.AlphaVantageAPIKeywords.*;
  */
 @Service
 public class QueryLogicService {
-  @Autowired private MySQLService sql;
-  @Autowired private AlphaVantageService alpha;
+  @Autowired
+  private MySQLService sql;
+  @Autowired
+  private AlphaVantageService alpha;
+
+  @Value("${date.format}")
+  private String dateFormat;
 
   private boolean marketClosed(String date) throws ParseException {
     Calendar c = Calendar.getInstance();
-    c.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(date));
+    c.setTime(new SimpleDateFormat(dateFormat).parse(date));
     if ((c.get(Calendar.DAY_OF_WEEK)) == Calendar.SATURDAY || c.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || sql.isCloseDay(date))
       return true;
     else
@@ -43,7 +49,7 @@ public class QueryLogicService {
     for (int i = 0; i < countingDays; ++i) {
       Calendar cal = Calendar.getInstance();
       cal.add(Calendar.DATE, -i);
-      String date = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
+      String date = new SimpleDateFormat(dateFormat).format(cal.getTime());
       OneDayPrice selected = sql.select(symbol, date);
       if (selected == null) {
         if (!marketClosed(date) && !updated) {
